@@ -7,17 +7,26 @@ class Section(metaclass=ABCMeta):
         pass
 
 
-class HTML(Section):
-    pass
-
-
 #region Bootstrap 4
-class BootstrapStart(Section):
-    def __init__(self, body=None):
+class BootstrapEntry(Section):
+    def __init__(self, style=None, js=None, body=None):
         self.body = body
+        self.style = style
+        self.js = js
+
 
     def __repr__(self):
         return "Bootstrap | CSS"
+
+    def get_resources(self):
+        resources = "<!-- Template Resources -->"
+        if self.style is not None:
+            resources += self.style
+            
+        if self.js is not None:
+            resources += self.js
+
+        return resources
 
     def content(self):
 
@@ -31,7 +40,9 @@ class BootstrapStart(Section):
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    
+
+    {}
+
     <style>
         .row.content {height: 1500px;}
         .sidenav {
@@ -49,7 +60,8 @@ class BootstrapStart(Section):
     </style>
 
     <title>Hello, world!</title>
-  </head>'''
+  </head>'''.format(self.get_resources())
+
         if self.body is not None:
             body = self.body
         else:
@@ -62,13 +74,25 @@ class BootstrapStart(Section):
     def description(self):
         return "Bootstrap | CSS"
 
-class BootstrapFontAwesome(Section):
+class BootstrapEntryFontAwesome(Section):
 
-    def __init__(self, body=None):
+    def __init__(self, style=None, js=None, body=None):
         self.body = body
+        self.js= js
+        self.style = style
 
     def __repr__(self):
         return "Bootstrap | CSS | Font Awesome"
+
+    def get_resources(self):
+        resources = "<!-- Template Resources -->"
+        if self.style is not None:
+            resources += self.style
+            
+        if self.js is not None:
+            resources += self.js
+
+        return resources
 
     def content(self):
         content = '''
@@ -84,25 +108,12 @@ class BootstrapFontAwesome(Section):
     
     <!-- Font Awesome CSS -->
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    
-    <style>
-        .row.content {height: 1500px;}
-        .sidenav {
-      background-color: #f1f1f1;
-      height: 100%;
-    }
 
-    @media screen and (max-width: 767px) {
-      .sidenav {
-        height: auto;
-        padding: 15px;
-      }
-      .row.content {height: auto;} 
-    }
-    </style>
+    
+    {}
 
     <title>Hello, world!</title>
-  </head>'''
+  </head>'''.format(self.get_resources())
     
         if self.body is not None:
             body = self.body
@@ -670,6 +681,7 @@ class ThreeCol(Section):
 
 #region Templates
 
+#region Band Template
 class BandTemplate(Section):
 
     def __init__(self, name=None, nav=None, members=None):
@@ -816,11 +828,99 @@ class BandTemplate(Section):
             index += 1
 
         roster += "</div>"
-        return navigation + slider + about + roster
+
+        tour = '''
+        <div id="tour" class="container-fluid bg-1">
+            <div class="">
+                <h3 class="text-center">Tour Dates</h3>
+                <p class="text-center">Come see us live! Book your tickets!</p>
+                <ul class="list-group">
+                    <li class="list-group-item">May <span class="badge badge-danger">Sold Out!</span></li>
+                    <li class="list-group-item">June <span class="badge badge-danger">Sold Out</span></li>
+                    <li class="list-group-item">July <span class="badge badge-secondary">3</span></li>
+                </ul>
+
+
+                <div class="row text-center">
+                    <div class="col-sm-4">
+                        <div class="thumbnail">
+                            <img src="paris.jpg" alt="Paris" width="400" height="300">
+                            <p><strong>Paris</strong></p>
+                            <p>27 July 2019</p>
+                            <button class="btn" data-toggle="modal" data-target="#buyModal">Buy Tickets</button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="thumbnail">
+                            <img src="newyork.jpg" alt="New York" width="400" height="300">
+                            <p><strong>New York</strong></p>
+                            <p>28 July 2019</p>
+                            <button class="btn" data-toggle="modal" data-target="#buyModal">Buy Tickets</button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="thumbnail">
+                            <img src="sanfran.jpg" alt="San Francisco" width="400" height="300">
+                            <p><strong>San Francisco</strong></p>
+                            <p>29 July 2019</p>
+                            <button class="btn" data-toggle="modal" data-target="#buyModal">Buy Tickets</button>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="buyModal" role="dialog">
+                        <div class="modal-dialog">
+                            
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button><br>
+                                    <h4><span class="fa fa-lock"></span> Tickets</h4>
+                                </div>
+
+                                <div class="modal-body">
+                                    <form role="form">
+                                        <div class="form-group">
+                                            <label for="psw"><span class="fa fa-shopping-cart"></span> Tickets, $20 per person.</label>
+                                            <input type="number" class="form-control" id="psw" placeholder="How many?">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="usrname"><span class="fa fa-user"></span> Send To</label>
+                                            <input type="text" class="form-control" id="usrname" placeholder="Enter email">
+                                        </div>
+
+                                        <button type="submit" class="btn btn-block">Purchase <span class="fa fa-ok"></span></button>
+                                    </form>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger btn-default pull-left" data-dismiss="modal">
+                                        <span class="fa fa-remove"></span> Cancel
+                                    </button>
+                                    <p>Need <a href="">Help?</a></p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        '''
+        return navigation + slider + about + roster + tour
 
     def description(self):
         return self.__repr__
+#endregion Band Template
 
+#region Shop Template
+class Shop(Section):
+    def __init__(self):
+        self.style = style
+        self.js = js
+        self.body = body
+#endregion Shop Template
 #endregion Templates
 
 #region Footer

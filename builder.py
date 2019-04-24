@@ -107,8 +107,9 @@ class simpleblog(Website):
 
 class band(Website):
     def create_website(self):
+        style = "<link rel=\"stylesheet\" href=\"band.css\">"
         body = "<body id='musicPage' data-spy='scroll' data-target='.navbar' data-offset='50'>"
-        self.add_section(sections.BootstrapFontAwesome(body=body))
+        self.add_section(sections.BootstrapEntryFontAwesome(style=style, body=body))
         self.add_section(sections.BandTemplate(name=order.project, nav=order.pages, members=order.members))
         self.add_section(sections.BootstrapEnd())
 
@@ -121,22 +122,22 @@ class store(Website):
 
 class administration(Website):
     def create_website(self):
-        self.add_section(sections.BootstrapFontAwesome())
+        self.add_section(sections.BootstrapEntryFontAwesome())
         self.add_section(sections.BootstrapEnd())
 
 
 class portfolio(Website):
     def create_website(self):
-        self.add_section(sections.BootstrapFontAwesome())
+        self.add_section(sections.BootstrapEntryFontAwesome())
         self.add_section(sections.BootstrapEnd())
 
 
 class fromconfig(Website):
     def create_website(self):
         if order.fontawesome:
-            self.add_section(sections.BootstrapFontAwesome())
+            self.add_section(sections.BootstrapEntryFontAwesome())
         else:
-            self.add_section(sections.BootstrapStart())
+            self.add_section(sections.BootstrapEntry())
 
         self.add_section(sections.NavbarCentered())
         self.add_section(sections.Jumbotron())
@@ -146,15 +147,23 @@ class fromconfig(Website):
         self.add_section(sections.BootstrapEnd())
 
 
+def render_template(order):
+    website_type = order.layout
+    template = eval(website_type)()
+    print("Creating {} website".format(type(template).__name__))
+    print("Contains the following sections: {}".format(template.get_sections()))
 
-website_type = order.layout
-website = eval(website_type)()
-print("Creating another website...", type(website).__name__)
-print("Website has sections -- ", website.get_sections())
-content = ""
-for section in website.sections:
-    content += section.content()
+    return template
 
-with open("index.html", "w") as file:
-    file.write(content)
-    print("Success")
+
+def write_template(template):
+    content = ""
+    for section in template.sections:
+        print("writing section -- {}".format(section))
+        content += section.content()
+    try:
+        with open("{}.html".format(type(template).__name__), "w") as file:
+            file.write(content)
+            return "Success! created {}".format(file)
+    except Exception as e:
+        return e
