@@ -156,6 +156,15 @@ def render_template(order):
     return template
 
 
+def template_build(layout):
+    try:
+        template = eval(layout)()
+        print("Creating P{ website".format(type(template).__name__))
+        print("Contains the following sections: {}".format(template.get_sections()))
+        return template
+    except Exception as e:
+        return e
+
 def write_template(template):
     content = ""
     for section in template.sections:
